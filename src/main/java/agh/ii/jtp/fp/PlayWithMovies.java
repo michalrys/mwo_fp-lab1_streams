@@ -1,7 +1,13 @@
 package agh.ii.jtp.fp;
 
+import agh.ii.jtp.fp.dal.ImdbTop250;
+import agh.ii.jtp.fp.model.Movie;
+
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 interface PlayWithMovies {
 
@@ -9,7 +15,10 @@ interface PlayWithMovies {
      * Returns the movies (only titles) directed (or co-directed) by a given director
      */
     static Set<String> ex01(String director) {
-        throw new RuntimeException("ex01 is not implemented!");
+        return ImdbTop250.movies().get().stream()
+                .filter(s -> s.directors().contains(director))
+                .map(s -> s.title())
+                .collect(Collectors.toSet());
     }
 
     /**
