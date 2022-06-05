@@ -56,6 +56,7 @@ interface PlayWithMovies {
         return ex03().entrySet().stream()
                 //TODO: simple test --> go to Scratch_1_for_ex4
                 .sorted((s1, s2) -> s1.getValue() >= s2.getValue() ? -1 : 1)
+//                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())  //FIXME -> alternative; go to ex07
                 .limit(10)
                 .collect(Collectors.toMap(
                         eSet -> eSet.getKey(),
@@ -120,7 +121,27 @@ interface PlayWithMovies {
      * Returns the 9 actors with the most films on the list
      */
     static Map<String, Long> ex07() {
-        throw new RuntimeException("ex07 is not implemented!");
+        LinkedHashMap<String, Long> collect = ex06().entrySet().stream()
+                .sorted((e1, e2) -> {
+                    Long valuePrevious = e1.getValue();
+                    Long valueNext = e2.getValue();
+                    if (valuePrevious == valueNext) {
+                        return 0;
+                    } else if (valuePrevious > valueNext) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                })
+//                .sorted(Map.Entry.<String, Long>comparingByValue().reversed()) //FIXME: or can be used this line
+                .limit(9)
+                .collect(Collectors.toMap(
+                        key -> key.getKey(),
+                        value -> value.getValue(),
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+        return collect;
     }
 
     /**
