@@ -53,7 +53,26 @@ interface PlayWithMovies {
      * Returns the 10 directors with the most films on the list
      */
     static Map<String, Long> ex04() {
-        throw new RuntimeException("ex04 is not implemented!");
+        Map<String, Long> directorsAmountOfFilms = ImdbTop250.movies().get().stream()
+                .map(s -> Utils.oneToManyByDirector(s))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(
+                        key -> key.directors().get(0),
+                        value -> 1L,
+                        (previousValue, nextValue) -> previousValue + 1L
+                ));
+
+
+        return directorsAmountOfFilms.entrySet().stream()
+                //TODO: simple test --> go to Scratch_1_for_ex4
+                .sorted((s1, s2) -> s1.getValue() >= s2.getValue() ? -1 : 1)
+                .limit(10)
+                .collect(Collectors.toMap(
+                        eSet -> eSet.getKey(),
+                        eSet -> eSet.getValue(),
+                        (previous, next) -> previous,
+                        LinkedHashMap::new
+                ));
     }
 
     /**
