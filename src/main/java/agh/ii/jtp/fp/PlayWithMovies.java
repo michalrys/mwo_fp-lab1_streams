@@ -152,7 +152,32 @@ interface PlayWithMovies {
      * Returns the movies (only titles) of each of the 9 actors from {@link PlayWithMovies#ex07 ex07}
      */
     static Map<String, Set<String>> ex08() {
-        throw new RuntimeException("ex08 is not implemented!");
+        Map<String, Set<String>> actorsMovies = ImdbTop250.movies().get().stream()
+                .map(s -> Utils.oneToManyByActor(s))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(
+                        key -> key.actors().get(0),
+                        value -> {
+                            Set<String> movies = new HashSet<>();
+                            movies.add(value.title());
+                            return movies;
+                        },
+                        (previousValue, nextValue) -> {
+                            previousValue.addAll(nextValue);
+                            return previousValue;
+                        }
+                ));
+
+        return actorsMovies.entrySet().stream()
+                .sorted((e1, e2) -> e1.getValue().size() == e2.getValue().size() ?
+                        0 : (e1.getValue().size() > e2.getValue().size() ? -1 : 1))
+                .limit(9)
+                .collect(Collectors.toMap(
+                        key -> key.getKey(),
+                        value -> value.getValue(),
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 
     /**
