@@ -184,13 +184,48 @@ interface PlayWithMovies {
      * Returns the 5 most frequent actor partnerships (i.e., appearing together most often)
      */
     static Map<String, Long> ex09() {
-        throw new RuntimeException("ex08 is not implemented!");
+        Map<String, Long> actorsDuosAmountOfFilms = ImdbTop250.movies().get().stream()
+                .map(s -> Utils.oneToManyByActorDuo(s))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(
+                        key -> {
+                            String pair = key.actors().toString();
+                            return pair.substring(1, pair.length() - 1);
+                        },
+                        value -> 1L,
+                        (previousValue, nextValue) -> previousValue + 1
+                ));
+
+        LinkedHashMap<String, Long> top5duos = actorsDuosAmountOfFilms.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(5)
+                .collect(Collectors.toMap(
+                        key -> key.getKey(),
+                        value -> value.getValue(),
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+
+//        System.out.println(top5duos);
+        return top5duos;
     }
 
     /**
      * Returns the movies (only titles) of each of the 5 most frequent actor partnerships
      */
     static Map<String, Set<String>> ex10() {
+
+        //                        value -> {
+//                            Set<String> titles = new HashSet<>();
+//                            String title = value.title();
+//                            titles.add(title);
+//                            return titles;
+//                        },
+//                        (previousValue, nextValue) -> {
+//                            previousValue.addAll(nextValue);
+//                            return previousValue;
+//                        }
         throw new RuntimeException("ex10 is not implemented!");
     }
 }
