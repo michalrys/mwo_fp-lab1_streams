@@ -69,7 +69,37 @@ interface PlayWithMovies {
      * Returns the movies (only titles) made by each of the 10 directors found in {@link PlayWithMovies#ex04 ex04}
      */
     static Map<String, Set<String>> ex05() {
-        throw new RuntimeException("ex05 is not implemented!");
+        // I cannot use previous code, because I need map director:titles
+        // --> in ex03 there is map director:amount_of_movies
+        Map<String, Set<String>> directorMovies = ImdbTop250.movies().get().stream()
+                .map(s -> Utils.oneToManyByDirector(s))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(
+                        key -> key.directors().get(0),
+                        value -> {                                  // I add movies to set
+                            Set<String> movies = new HashSet<>();
+                            movies.add(value.title());
+                            return movies;
+                        },
+                        (previousValue, nextValue) ->
+                        {
+                            previousValue.addAll(nextValue);
+                            return previousValue;
+                        }
+                ));
+
+        // this is almost the same like for ex4 -> I sort by size of the set where movies are stored
+        LinkedHashMap<String, Set<String>> directorMoviesTenSorted = directorMovies.entrySet().stream()
+                .sorted((e1, e2) -> e1.getValue().size() >= e2.getValue().size() ? -1 : 1)
+                .limit(10)
+                .collect(Collectors.toMap(
+                        key -> key.getKey(),
+                        value -> value.getValue(),
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+        return directorMoviesTenSorted;
     }
 
     /**
