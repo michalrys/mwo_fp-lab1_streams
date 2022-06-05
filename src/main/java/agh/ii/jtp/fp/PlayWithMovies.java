@@ -106,7 +106,14 @@ interface PlayWithMovies {
      * Returns the number of movies per actor (as a map)
      */
     static Map<String, Long> ex06() {
-        throw new RuntimeException("ex06 is not implemented!");
+        return ImdbTop250.movies().get().stream()
+                .map(s -> Utils.oneToManyByActor(s))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(
+                        key -> key.actors().get(0),
+                        value -> 1L,
+                        (previousValue, nextValue) -> previousValue + 1L
+                ));
     }
 
     /**
