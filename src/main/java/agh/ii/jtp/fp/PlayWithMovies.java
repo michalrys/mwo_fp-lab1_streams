@@ -1,9 +1,12 @@
 package agh.ii.jtp.fp;
 
 import agh.ii.jtp.fp.dal.ImdbTop250;
+import agh.ii.jtp.fp.model.Movie;
+import agh.ii.jtp.fp.utils.Utils;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 interface PlayWithMovies {
 
@@ -35,7 +38,15 @@ interface PlayWithMovies {
      * Returns the number of movies per director (as a map)
      */
     static Map<String, Long> ex03() {
-        throw new RuntimeException("ex03 is not implemented!");
+        //TODO: simple test --> go to Scratch_1_for_ex3
+        return ImdbTop250.movies().get().stream()
+                .map(s -> Utils.oneToManyByDirector(s))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(
+                        key -> key.directors().get(0),
+                        value -> 1L,
+                        (previousValue, nextValue) -> previousValue + 1L
+                ));
     }
 
     /**
