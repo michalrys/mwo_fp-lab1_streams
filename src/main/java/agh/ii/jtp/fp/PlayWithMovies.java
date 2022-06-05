@@ -25,7 +25,10 @@ interface PlayWithMovies {
      * Returns the movies (only titles) in which an actor played
      */
     static Set<String> ex02(String actor) {
-        throw new RuntimeException("ex02 is not implemented!");
+        return ImdbTop250.movies().get().stream()
+                .filter(s -> s.actors().contains(actor))
+                .map(s -> s.title())
+                .collect(Collectors.toSet());
     }
 
     /**
