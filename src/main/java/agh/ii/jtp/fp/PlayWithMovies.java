@@ -215,18 +215,38 @@ interface PlayWithMovies {
      * Returns the movies (only titles) of each of the 5 most frequent actor partnerships
      */
     static Map<String, Set<String>> ex10() {
+        Map<String, Set<String>> topDuosTitles = ImdbTop250.movies().get().stream()
+                .map(s -> Utils.oneToManyByActorDuo(s))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(
+                        key -> {
+                            String pair = key.actors().toString();
+                            return pair.substring(1, pair.length() - 1);
+                        },
+                        value -> {
+                            Set<String> titles = new HashSet<>();
+                            String title = value.title();
+                            titles.add(title);
+                            return titles;
+                        },
+                        (previousValue, nextValue) -> {
+                            previousValue.addAll(nextValue);
+                            return previousValue;
+                        }));
 
-        //                        value -> {
-//                            Set<String> titles = new HashSet<>();
-//                            String title = value.title();
-//                            titles.add(title);
-//                            return titles;
-//                        },
-//                        (previousValue, nextValue) -> {
-//                            previousValue.addAll(nextValue);
-//                            return previousValue;
-//                        }
-        throw new RuntimeException("ex10 is not implemented!");
+        LinkedHashMap<String, Set<String>> topDuosTitlesSorted = topDuosTitles.entrySet().stream()
+                .sorted((e1, e2) -> e1.getValue().size() == e2.getValue().size() ?
+                        0 : (e1.getValue().size() > e2.getValue().size() ? -1 : 1))
+                .limit(5)
+                .collect(Collectors.toMap(
+                        key -> key.getKey(),
+                        value -> value.getValue(),
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+//        System.out.println(topDuosTitlesSorted);
+        return topDuosTitlesSorted;
     }
 }
 
