@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Test1 {
+public class Scratch_1_onlyForQuickTestMR {
     public static void main(String[] args) {
         Optional<List<Movie>> movies = ImdbTop250.movies();
 
