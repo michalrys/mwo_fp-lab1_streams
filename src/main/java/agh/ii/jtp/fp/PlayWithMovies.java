@@ -55,7 +55,8 @@ interface PlayWithMovies {
     static Map<String, Long> ex04() {
         return ex03().entrySet().stream()
                 //TODO: simple test --> go to Scratch_1_for_ex4
-                .sorted((s1, s2) -> s1.getValue() >= s2.getValue() ? -1 : 1)
+                .sorted((e1, e2) -> e1.getValue() == e2.getValue() ? 0 : (e1.getValue() > e2.getValue() ? -1 : 1)) //FIXED - see ex07
+//                .sorted((s1, s2) -> s1.getValue() >= s2.getValue() ? -1 : 1)
 //                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())  //FIXME -> alternative; go to ex07
                 .limit(10)
                 .collect(Collectors.toMap(
@@ -91,7 +92,9 @@ interface PlayWithMovies {
 
         // this is almost the same like for ex4 -> I sort by size of the set where movies are stored
         LinkedHashMap<String, Set<String>> directorMoviesTenSorted = directorMovies.entrySet().stream()
-                .sorted((e1, e2) -> e1.getValue().size() >= e2.getValue().size() ? -1 : 1)
+                .sorted((e1, e2) -> e1.getValue().size() == e2.getValue().size() ?
+                        0 : (e1.getValue().size() > e2.getValue().size() ? -1 : 1)) //FIXED - see ex07
+//                .sorted((e1, e2) -> e1.getValue().size() >= e2.getValue().size() ? -1 : 1)
                 .limit(10)
                 .collect(Collectors.toMap(
                         key -> key.getKey(),
@@ -122,18 +125,19 @@ interface PlayWithMovies {
      */
     static Map<String, Long> ex07() {
         LinkedHashMap<String, Long> collect = ex06().entrySet().stream()
-                .sorted((e1, e2) -> {
-                    Long valuePrevious = e1.getValue();
-                    Long valueNext = e2.getValue();
-                    if (valuePrevious == valueNext) {
-                        return 0;
-                    } else if (valuePrevious > valueNext) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
-                })
+                .sorted((e1, e2) -> e1.getValue() == e2.getValue() ? 0 : (e1.getValue() > e2.getValue() ? -1 : 1)) //FIXED: >= ? is wrong
 //                .sorted(Map.Entry.<String, Long>comparingByValue().reversed()) //FIXME: or can be used this line
+//                .sorted((e1, e2) -> {                                          //FIXME: or large form
+//                    Long valuePrevious = e1.getValue();
+//                    Long valueNext = e2.getValue();
+//                    if (valuePrevious == valueNext) {
+//                        return 0;
+//                    } else if (valuePrevious > valueNext) {
+//                        return -1;
+//                    } else {
+//                        return 1;
+//                    }
+//                })
                 .limit(9)
                 .collect(Collectors.toMap(
                         key -> key.getKey(),
